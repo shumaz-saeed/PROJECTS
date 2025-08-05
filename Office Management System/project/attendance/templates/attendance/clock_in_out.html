@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Clock In/Out - TECHESTHETE{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Daily Attendance</h1>
+
+    <div class="mb-6 text-center">
+        <p class="text-lg text-gray-700">Today's Date: <span class="font-semibold">{{ today|date:"F d, Y" }}</span></p>
+        {% if attendance.clock_in %}
+            <p class="text-lg text-gray-700">Clock In: <span class="font-semibold">{{ attendance.clock_in|date:"P" }}</span></p>
+        {% else %}
+            <p class="text-lg text-gray-700">Clock In: <span class="font-semibold text-gray-500">Not yet clocked in</span></p>
+        {% endif %}
+
+        {% if attendance.clock_out %}
+            <p class="text-lg text-gray-700">Clock Out: <span class="font-semibold">{{ attendance.clock_out|date:"P" }}</span></p>
+        {% else %}
+            <p class="text-lg text-gray-700">Clock Out: <span class="font-semibold text-gray-500">Not yet clocked out</span></p>
+        {% endif %}
+
+        {% if attendance.working_hours %}
+            <p class="text-lg text-gray-700">Working Hours: <span class="font-semibold text-indigo-600">{{ attendance.working_hours }} hours</span></p>
+        {% elif attendance.clock_in and not attendance.clock_out %}
+             <p class="text-lg text-green-600 font-semibold mt-2">You are currently clocked in.</p>
+        {% endif %}
+    </div>
+
+    <form method="post" class="flex justify-center space-x-4">
+        {% csrf_token %}
+        {% if not attendance.clock_in %}
+            <button type="submit" name="clock_in" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-md shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                Clock In
+            </button>
+        {% elif attendance.clock_in and not attendance.clock_out %}
+            <button type="submit" name="clock_out" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-md shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                Clock Out
+            </button>
+        {% else %}
+            <button type="button" disabled class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-md cursor-not-allowed">
+                Clocked Out for Today
+            </button>
+        {% endif %}
+    </form>
+
+    <div class="mt-8 text-center">
+        <a href="{% url 'attendance_history' %}" class="text-indigo-600 hover:underline font-medium">View Attendance History</a>
+    </div>
+</div>
+{% endblock %}
+
