@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ form_title }} - TECHESTHETE{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">{{ form_title }}</h1>
+
+    <div class="mb-6 border-b pb-4">
+        <p class="text-gray-700 mb-2"><strong class="font-semibold">Employee:</strong> {{ leave_request.user.username }}</p>
+        <p class="text-gray-700 mb-2"><strong class="font-semibold">Dates:</strong> {{ leave_request.start_date|date:"M d, Y" }} to {{ leave_request.end_date|date:"M d, Y" }}</p>
+        <p class="text-gray-700 mb-2"><strong class="font-semibold">Reason:</strong> {{ leave_request.reason }}</p>
+        <p class="text-gray-700 mb-2"><strong class="font-semibold">Current Status:</strong>
+            <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full
+                {% if leave_request.status == 'Approved' %}bg-green-100 text-green-800
+                {% elif leave_request.status == 'Rejected' %}bg-red-100 text-red-800
+                {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                {{ leave_request.status }}
+            </span>
+        </p>
+        <p class="text-gray-700 mb-2"><strong class="font-semibold">Requested At:</strong> {{ leave_request.requested_at|date:"M d, Y P" }}</p>
+        {% if leave_request.approved_by %}
+            <p class="text-gray-700 mb-2"><strong class="font-semibold">Approved/Rejected By:</strong> {{ leave_request.approved_by.username }}</p>
+            <p class="text-gray-700 mb-2"><strong class="font-semibold">Approval Date:</strong> {{ leave_request.approval_date|date:"M d, Y P" }}</p>
+        {% endif %}
+    </div>
+
+    {% if leave_request.status == 'Pending' %}
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        <div class="mb-4 form-field">
+            <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Change Status
+            </label>
+            {{ form.status }}
+            {% for error in form.status.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="flex items-center justify-end space-x-4">
+            <a href="{% url 'leave_list' %}" class="text-gray-600 hover:text-gray-900 font-medium">Cancel</a>
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-300 ease-in-out">
+                Update Status
+            </button>
+        </div>
+    </form>
+    {% else %}
+    <p class="text-gray-600 text-center mt-8">This leave request has already been reviewed.</p>
+    <div class="flex justify-center mt-4">
+        <a href="{% url 'leave_list' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-sm transition duration-300 ease-in-out">
+            Back to Leave List
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
