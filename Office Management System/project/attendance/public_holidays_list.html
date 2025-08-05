@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Public Holidays - TECHESTHETE{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Public Holidays</h1>
+
+    {% if holidays %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Holiday Name</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for holiday in holidays %}
+                <tr>
+                    <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-900">{{ holiday.date|date:"M d, Y" }}</td>
+                    <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-900">{{ holiday.name }}</td>
+                    <td class="py-3 px-4 text-sm text-gray-900">{{ holiday.description|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-gray-600">No public holidays found.</p>
+    {% endif %}
+
+    <div class="mt-8 text-center">
+        <a href="{% url 'dashboard' %}" class="text-indigo-600 hover:underline font-medium">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
