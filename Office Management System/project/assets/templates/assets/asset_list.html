@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Asset List - TECHESTHETE{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Asset List</h1>
+
+    {% if can_manage_assets %}
+    <div class="mb-6">
+        <a href="{% url 'asset_add' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-300 ease-in-out">
+            Add New Asset
+        </a>
+    </div>
+    {% endif %}
+
+    {% if assets %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset Name</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial Number</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Date</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for asset in assets %}
+                <tr>
+                    <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-900">{{ asset.name }}</td>
+                    <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-900">{{ asset.serial_number|default:"N/A" }}</td>
+                    <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-900">{% if asset.assigned_to %}{{ asset.assigned_to.username }}{% else %}Unassigned{% endif %}</td>
+                    <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-900">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            {% if asset.status == 'in-use' %}bg-blue-100 text-blue-800
+                            {% elif asset.status == 'maintenance' %}bg-yellow-100 text-yellow-800
+                            {% elif asset.status == 'retired' %}bg-red-100 text-red-800
+                            {% else %}bg-green-100 text-green-800{% endif %}">
+                            {{ asset.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-900">{% if asset.purchase_date %}{{ asset.purchase_date|date:"M d, Y" }}{% else %}N/A{% endif %}</td>
+                    <td class="py-3 px-4 whitespace-nowrap text-sm font-medium">
+                        {% if can_manage_assets %}
+                            <a href="{% url 'asset_edit' asset.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                            <a href="{% url 'asset_delete' asset.pk %}" class="text-red-600 hover:text-red-900">Delete</a>
+                        {% else %}
+                            <span class="text-gray-500">No actions</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-gray-600">No assets found.</p>
+    {% endif %}
+
+    <div class="mt-8 text-center">
+        <a href="{% url 'dashboard' %}" class="text-indigo-600 hover:underline font-medium">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
