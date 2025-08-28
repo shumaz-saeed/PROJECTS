@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Room Availability - TECHESTHETE{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Room Availability</h1>
+    <p class="text-gray-700 mb-6">Select a room to view its detailed schedule.</p>
+
+    {% if rooms %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for room in rooms %}
+        <div class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200 text-center">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ room.name }}</h2>
+            <p class="text-gray-600 mb-3">Capacity: {{ room.capacity }} | Location: {{ room.location|default:"N/A" }}</p>
+            <a href="{% url 'room_schedule' room.pk %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-300 ease-in-out">
+                View Schedule
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-600">No meeting rooms available.</p>
+    {% endif %}
+
+    <div class="mt-8 text-center">
+        <a href="{% url 'dashboard' %}" class="text-indigo-600 hover:underline font-medium">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
